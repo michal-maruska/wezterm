@@ -131,6 +131,7 @@ case $OSTYPE in
   linux-gnu|linux)
     distro=$(lsb_release -is 2>/dev/null || sh -c "source /etc/os-release && echo \$NAME")
     distver=$(lsb_release -rs 2>/dev/null || sh -c "source /etc/os-release && echo \$VERSION_ID")
+    if [[ $distver == "n/a" ]]; then distver=""; fi
     case "$distro" in
       *Fedora*|*CentOS*|*SUSE*)
         WEZTERM_RPM_VERSION=$(echo ${TAG_NAME#nightly-} | tr - _)
