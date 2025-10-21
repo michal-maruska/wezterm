@@ -906,7 +906,7 @@ pub fn derive_command_from_key_assignment(action: &KeyAssignment) -> Option<Comm
             doc: "Scales the font size smaller by 10%".into(),
             keys: vec![
                 (Modifiers::SUPER, "-".into()),
-                (Modifiers::CTRL, "-".into()),
+                // (Modifiers::CTRL, "-".into()),
             ],
             args: &[ArgType::ActiveWindow],
             menubar: &["View", "Font Size"],
