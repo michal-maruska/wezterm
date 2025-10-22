@@ -618,7 +618,9 @@ pub fn derive_command_from_key_assignment(action: &KeyAssignment) -> Option<Comm
         PasteFrom(ClipboardPasteSource::PrimarySelection) => CommandDef {
             brief: "Paste primary selection".into(),
             doc: "Pastes text from the primary selection".into(),
-            keys: vec![(Modifiers::SHIFT, "Insert".into())],
+            keys: vec![(Modifiers::SHIFT, "Insert".into()),
+                       (Modifiers::CTRL.union(Modifiers::ALT), "y".into())
+            ],
             args: &[ArgType::ActivePane],
             menubar: &["Edit"],
             icon: Some("md_content_paste"),
