@@ -1343,7 +1343,9 @@ pub fn derive_command_from_key_assignment(action: &KeyAssignment) -> Option<Comm
                 CommandDef {
                     brief: "Scroll Up One Page".into(),
                     doc: "Scrolls the viewport up by 1 page".into(),
-                    keys: vec![(Modifiers::SHIFT, "PageUp".into())],
+                    keys: vec![(Modifiers::SHIFT, "PageUp".into()),
+                               (Modifiers::RIGHT_ALT, "p".into()),
+                    ],
                     args: &[ArgType::ActivePane],
                     menubar: &["View"],
                     icon: None,
@@ -1352,7 +1354,9 @@ pub fn derive_command_from_key_assignment(action: &KeyAssignment) -> Option<Comm
                 CommandDef {
                     brief: "Scroll Down One Page".into(),
                     doc: "Scrolls the viewport down by 1 page".into(),
-                    keys: vec![(Modifiers::SHIFT, "PageDown".into())],
+                    keys: vec![(Modifiers::SHIFT, "PageDown".into()),
+                               (Modifiers::RIGHT_ALT, "n".into()),
+                    ],
                     args: &[ArgType::ActivePane],
                     menubar: &["View"],
                     icon: None,
