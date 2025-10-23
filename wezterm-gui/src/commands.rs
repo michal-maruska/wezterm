@@ -1200,7 +1200,7 @@ pub fn derive_command_from_key_assignment(action: &KeyAssignment) -> Option<Comm
             tab then cycles around and activates the right-most tab"
                 .into(),
             keys: vec![
-                (Modifiers::SUPER.union(Modifiers::SHIFT), "[".into()),
+                (Modifiers::SUPER, "[".into()),
                 (Modifiers::CTRL.union(Modifiers::SHIFT), "Tab".into()),
                 (Modifiers::CTRL, "PageUp".into()),
             ],
@@ -1214,7 +1214,7 @@ pub fn derive_command_from_key_assignment(action: &KeyAssignment) -> Option<Comm
             tab then cycles around and activates the left-most tab"
                 .into(),
             keys: vec![
-                (Modifiers::SUPER.union(Modifiers::SHIFT), "]".into()),
+                (Modifiers::SUPER, "]".into()),
                 (Modifiers::CTRL, "Tab".into()),
                 (Modifiers::CTRL, "PageDown".into()),
             ],
