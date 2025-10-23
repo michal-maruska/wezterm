@@ -1395,7 +1395,17 @@ pub fn derive_command_from_key_assignment(action: &KeyAssignment) -> Option<Comm
                              {amount} line(s)"
                 )
                 .into(),
-                keys: vec![],
+                keys:
+                    if *n > 0 {
+                        vec![
+                        (Modifiers::RIGHT_ALT, "k".into())
+                        ]
+                    } else {
+                        vec![
+                        (Modifiers::RIGHT_ALT, "i".into())
+                        ]
+                    }
+                ,
                 args: &[ArgType::ActivePane],
                 menubar: &[],
                 icon: None,
@@ -2068,6 +2078,8 @@ fn compute_default_actions() -> Vec<KeyAssignment> {
         ResetFontAndWindowSize,
         ScrollByPage(NotNan::new(-1.0).unwrap()),
         ScrollByPage(NotNan::new(1.0).unwrap()),
+        ScrollByLine(2),
+        ScrollByLine(-2),
         ScrollToTop,
         ScrollToBottom,
         // ----------------- Window
