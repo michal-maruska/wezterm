@@ -670,6 +670,7 @@ pub fn derive_command_from_key_assignment(action: &KeyAssignment) -> Option<Comm
             keys: vec![
                 (Modifiers::SUPER, "v".into()),
                 (Modifiers::NONE, "Paste".into()),
+                (Modifiers::CTRL.union(Modifiers::ALT), "7".into()),
             ],
             args: &[ArgType::ActivePane],
             menubar: &["Edit"],
