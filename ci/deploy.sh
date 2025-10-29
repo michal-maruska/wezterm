@@ -376,8 +376,11 @@ EOF
           $SUDO apt-get install ./$debname.deb
         fi
 
+        if false;
+        then
         mv pkg/debian pkg/wezterm
         tar cJf $debname.tar.xz -C pkg wezterm
+        fi
         rm -rf pkg
       ;;
     esac
