@@ -40,6 +40,8 @@ jobs:
           # mmc: full.
           # todo: up to previous tag
           fetch-depth: 0 # Get all history for tagging
+          submodules: "recursive"
+
       - name: fix ownership
         # mess with permissions/ownership: actions/checkout works outside the container
         run: |
