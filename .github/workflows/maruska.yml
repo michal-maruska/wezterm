@@ -59,6 +59,42 @@ jobs:
           name: debs-amd64
           path: ${{ github.workspace }}/artifacts/*
 
+  setup-artifacts:
+    needs: [build-custom ]   # build-amd64-and-indep, build-arm64]
+    if: always() && !cancelled()
+    runs-on: ubuntu-latest
+    outputs:
+      artifact_names: ${{ steps.compute.outputs.artifact_names }}
+    steps:
+      - id: compute
+        run: |
+          names='[debs-amd64]'
+          echo "artifact_names=$names" >> $GITHUB_OUTPUT
+          # fixme:  install jg
+          # always include indep if it was built
+          # if [ "${{ needs.build-amd64-and-indep.result }}" = "success" ]; then
+          #   names=$(echo $names | jq '. + ["debs-indep"]')
+          # fi
+          # if [ "${{ needs.build-amd64-and-indep.result }}" = "success" ] && \
+          #    [ "${{ contains(fromJson(inputs.architectures), 'amd64') }}" = "true" ]; then
+          #   names=$(echo $names | jq '. + ["debs-amd64"]')
+          # fi
+          # if [ "${{ needs.build-arm64.result }}" = "success" ]; then
+          #   names=$(echo $names | jq '. + ["debs-arm64"]')
+          # fi
+          # echo "artifact_names=$names" >> $GITHUB_OUTPUT
+
+  release:
+    needs: build-custom
+    uses: michal-maruska/workflows/.github/workflows/debian-release.yml@main
+    with:
+      artifact_names: ["debs-indep", "debs-amd64"]
+        # ${{ needs.setup-artifacts.outputs.artifact_names }}
+      release: "1"
+        # ${{ needs.update-changelog.outputs.version }}
+    secrets: inherit
+
+
 
 # fixme: I need a version string!
   notify:
