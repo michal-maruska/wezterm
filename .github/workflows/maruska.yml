@@ -43,6 +43,7 @@ jobs:
 
       - name: build
         run: |
+          apt update
           mkdir ../artifacts
           ./ci/mmc-build.sh
 
