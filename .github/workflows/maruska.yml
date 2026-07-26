@@ -85,7 +85,7 @@ jobs:
           # echo "artifact_names=$names" >> $GITHUB_OUTPUT
 
   release:
-    needs: build-custom
+    needs: setup-artifacts
     uses: michal-maruska/workflows/.github/workflows/debian-release.yml@main
     with:
       artifacts: '["debs-amd64"]' # "debs-indep",
@@ -98,7 +98,7 @@ jobs:
 
 # fixme: I need a version string!
   notify:
-    needs: [build-custom]
+    needs: [release]
     uses: michal-maruska/workflows/.github/workflows/notify-apt-repo.yml@main
     with:
       # component: ${{ github.repository }}
