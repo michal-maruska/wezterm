@@ -1,11 +1,6 @@
 name: Publish Debian Package
 
 on:
-  push:
-    # tags:
-    #   - 'sid/*'
-    #   - 'unstable/*'
-
   workflow_dispatch:
     inputs:
       ref:
@@ -26,25 +21,17 @@ permissions:
   packages: write # Optional, but good if you use GHCR
 
 jobs:
-  # publish:
-    # uses: michal-maruska/workflows/.github/workflows/build-and-publish-deb.yml@main
-    # with:
-    #   ref: ${{ inputs.ref || github.ref }}
-    #   architectures: ${{ inputs.architectures || vars.DEFAULT_ARCHITECTURES || '["amd64","arm64"]' }}
-    # secrets: inherit
-
   build-custom:
-    # needs: update-changelog
     runs-on: ubuntu-latest
     container:
       # this is what we build for: SID
-      image:  ghcr.io/${{ github.repository_owner }}/debian-builder:main
+      image: ghcr.io/${{ github.repository_owner }}/debian-builder:main
       # for now the image is not public ... mmc: why?
       credentials:
         username: ${{ github.actor }}
         password: ${{ secrets.GITHUB_TOKEN }}
 
-# Is this ORG-scope token? but why? others cannot READ the docker image?
+    # Is this ORG-scope token? but why? others cannot READ the docker image?
     steps:
       - name: Checkout source
         uses: actions/checkout@v4
@@ -54,15 +41,15 @@ jobs:
           # todo: up to previous tag
           fetch-depth: 0 # Get all history for tagging
 
-     - name: build
-       run: |
-         mkdir ../artifacts
-         ./ci/mmc-build.sh
+      - name: build
+        run: |
+          mkdir ../artifacts
+          ./ci/mmc-build.sh
 
 
 # fixme: I need a version string!
   notify:
-    needs: [build]
+    needs: [build-custom]
     uses: michal-maruska/workflows/.github/workflows/notify-apt-repo.yml@main
     with:
       component: ${{ github.repository }}
