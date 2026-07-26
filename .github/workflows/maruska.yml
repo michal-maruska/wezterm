@@ -52,6 +52,7 @@ jobs:
     needs: [build-custom]
     uses: michal-maruska/workflows/.github/workflows/notify-apt-repo.yml@main
     with:
-      component: ${{ github.repository }}
-      run_id: ${{ github.run_id }}
+      # component: ${{ github.repository }}
+      # run_id: ${{ github.run_id }}
+      release: 1 # fixme
     secrets: inherit
