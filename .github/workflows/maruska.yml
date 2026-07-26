@@ -40,6 +40,10 @@ jobs:
           # mmc: full.
           # todo: up to previous tag
           fetch-depth: 0 # Get all history for tagging
+      - name: fix ownership
+        # mess with permissions/ownership: actions/checkout works outside the container
+        run: |
+          chown -R builder:builder .
 
       - name: build
         run: |
