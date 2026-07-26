@@ -57,7 +57,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: debs-amd64
-          path: ${{ github.workspace }}/artifacts/*
+          path: ${{ github.workspace }}/_artifacts/*
 
   setup-artifacts:
     needs: [build-custom ]   # build-amd64-and-indep, build-arm64]
