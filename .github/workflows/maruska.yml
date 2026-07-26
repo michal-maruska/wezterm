@@ -88,7 +88,7 @@ jobs:
     needs: build-custom
     uses: michal-maruska/workflows/.github/workflows/debian-release.yml@main
     with:
-      artifact_names: ["debs-indep", "debs-amd64"]
+      artifact_names: '[debs-indep, debs-amd64]'
         # ${{ needs.setup-artifacts.outputs.artifact_names }}
       release: "1"
         # ${{ needs.update-changelog.outputs.version }}
