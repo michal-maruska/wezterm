@@ -406,7 +406,10 @@ impl KeyboardWithFallback {
                                      sym {fb_sym:?} because layout did not expand to \
                                      anything"
                                 );
-                                fb_sym
+                                // indeed: https://github.com/wezterm/wezterm/issues/4910#issuecomment-1962928909
+                                log::debug!("Not sure if this is a good idea -- maruska: disabled");
+                                // fb_sym
+                                sym
                             }
                             _ => sym,
                         }
