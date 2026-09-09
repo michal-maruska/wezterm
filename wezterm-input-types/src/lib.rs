@@ -732,9 +732,10 @@ impl Modifiers {
     /// are not bits that should be matched when matching key
     /// assignments.
     pub fn remove_positional_mods(self) -> Self {
-        self - (Self::LEFT_ALT
-            | Self::RIGHT_ALT
-            | Self::LEFT_CTRL
+        self - (
+            // Self::LEFT_ALT
+            // | Self::RIGHT_ALT
+             Self::LEFT_CTRL
             | Self::RIGHT_CTRL
             | Self::LEFT_SHIFT
             | Self::RIGHT_SHIFT
