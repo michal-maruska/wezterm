@@ -72,7 +72,7 @@ jobs:
     steps:
       - id: compute
         run: |
-          names='[debs-amd64]'
+          names="[debs-amd64]"
           echo "artifact_names=$names" >> $GITHUB_OUTPUT
           # fixme:  install jg
           # always include indep if it was built
