@@ -66,3 +66,15 @@ jobs:
         with:
           name: debs-amd64
           path: ${{ github.workspace }}/_artifacts/*
+
+  setup-artifacts:
+    needs: [build-custom ]   # build-amd64-and-indep, build-arm64]
+    if: always() && !cancelled()
+    runs-on: ubuntu-latest
+    outputs:
+      artifact_names: ${{ steps.compute.outputs.artifact_names }}
+    steps:
+      - id: compute
+        run: |
+          names='["debs-amd64"]'
+          echo "artifact_names=$names" >> $GITHUB_OUTPUT
