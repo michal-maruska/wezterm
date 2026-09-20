@@ -70,3 +70,14 @@ jobs:
         run: |
           names='["debs-amd64"]'
           echo "artifact_names=$names" >> $GITHUB_OUTPUT
+
+  release:
+    needs: setup-artifacts
+    uses: michal-maruska/workflows/.github/workflows/debian-release.yml@main
+    with:
+      artifacts: '["debs-amd64"]'
+        # "debs-indep",
+        # ${{ needs.setup-artifacts.outputs.artifact_names }}
+      release: "1"
+        # ${{ needs.update-changelog.outputs.version }}
+    secrets: inherit
