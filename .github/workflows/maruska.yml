@@ -61,7 +61,9 @@ jobs:
         run: |
           # ${{ github.workspace }}/
           DEB=$(ls _artifacts/wezterm-*.deb)
-          VERSION=$(echo "version=$DEB" | sed 's/wezterm-\(.*\)\.Debian\.deb/\1/')
+          VERSION=$(echo "$DEB" | sed 's|_artifacts/wezterm-\(.*\)\.Debian\.deb|\1|')
+          echo "this build produced release $VERSION"
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v7
@@ -95,7 +97,7 @@ jobs:
 
 # fixme: I need a version string!
   notify:
-    needs: [release, setup-artifacts]
+    needs: [release, build-custom]
     uses: michal-maruska/workflows/.github/workflows/notify-apt-repo.yml@main
     with:
       # component: ${{ github.repository }}
