@@ -185,7 +185,10 @@ impl GuiFrontEnd {
                             clipboard
                         );
                         // Route the assignment to the window that actually
-                        // contains the pane that emitted OSC 52.
+                        // contains the pane that emitted OSC 52. known_windows
+                        // is a BTreeMap keyed by the window handle, so simply
+                        // taking the first key always landed the clipboard on
+                        // the oldest window, no matter which pane asked for it.
                         let target_window = {
                             let windows = fe.known_windows.borrow();
                             Mux::get()
@@ -196,9 +199,6 @@ impl GuiFrontEnd {
                                         .find(|(_window, id)| **id == mux_window_id)
                                         .map(|(window, _mux_window_id)| window.clone())
                                 })
-                                // The pane may not be shown by any window, in this case we fallback
-                                // to any known window, rather than dropping the request.
-                                // (note: the clipboard must be owned by a specific window)
                                 .or_else(|| windows.keys().next().cloned())
                         };
                         if let Some(window) = target_window {
