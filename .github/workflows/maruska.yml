@@ -69,11 +69,18 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       artifact_names: ${{ steps.compute.outputs.artifact_names }}
+      version: ${{ steps.compute_version.outputs.version }}
     steps:
       - id: compute
         run: |
-          names='["debs-amd64"]'
-          echo "artifact_names=$names" >> $GITHUB_OUTPUT
+          names='["debs-amd64"]' # that's it
+          echo 'artifact_names=$names' >> $GITHUB_OUTPUT
+
+      - id: compute_version
+        run: |
+          # ${{ github.workspace }}/
+          DEB=$(ls _artifacts/wezterm-*.deb)
+          VERSION=$(echo "version=$DEB" | sed 's/wezterm-\(.*\)\.Debian\.deb/\1/')
 
   release:
     needs: setup-artifacts
@@ -82,16 +89,16 @@ jobs:
       artifacts: '["debs-amd64"]'
         # "debs-indep",
         # ${{ needs.setup-artifacts.outputs.artifact_names }}
-      release: "1"
+      release: ${{ needs.setup-artifacts.outputs.version }}
         # ${{ needs.update-changelog.outputs.version }}
     secrets: inherit
 
 # fixme: I need a version string!
   notify:
-    needs: [release]
+    needs: [release, setup-artifacts]
     uses: michal-maruska/workflows/.github/workflows/notify-apt-repo.yml@main
     with:
       # component: ${{ github.repository }}
       # run_id: ${{ github.run_id }}
-      release: 1 # fixme
+      release: ${{ needs.setup-artifacts.outputs.version }} # fixme
     secrets: inherit
