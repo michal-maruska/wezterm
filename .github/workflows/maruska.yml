@@ -81,3 +81,13 @@ jobs:
       release: "1"
         # ${{ needs.update-changelog.outputs.version }}
     secrets: inherit
+
+# fixme: I need a version string!
+  notify:
+    needs: [release]
+    uses: michal-maruska/workflows/.github/workflows/notify-apt-repo.yml@main
+    with:
+      # component: ${{ github.repository }}
+      # run_id: ${{ github.run_id }}
+      release: 1 # fixme
+    secrets: inherit
