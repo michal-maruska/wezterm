@@ -50,6 +50,11 @@ jobs:
       - name: build
         run: |
           apt update
-          mkdir ../artifacts
+          # mkdir _artifacts
           ./ci/mmc-build.sh
 
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: debs-amd64
+          path: ${{ github.workspace }}/_artifacts/*

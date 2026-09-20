@@ -25,4 +25,6 @@ fi
 # This invokes git and does not like non-owned
 ci/deploy.sh
 
-mv *.deb ../artifacts
+# after the build:
+mkdir _artifacts/
+mv *.deb _artifacts/
