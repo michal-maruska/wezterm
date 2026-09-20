@@ -34,8 +34,8 @@ jobs:
       credentials:
         username: ${{ github.actor }}
         password: ${{ secrets.GITHUB_TOKEN }}
-
-    # Is this ORG-scope token? but why? others cannot READ the docker image?
+    outputs:
+      version: ${{ steps.compute_version.outputs.version }}
     steps:
       - name: Checkout source
         uses: actions/checkout@v5
@@ -57,6 +57,12 @@ jobs:
           # mkdir _artifacts
           ./ci/mmc-build.sh
 
+      - id: compute_version
+        run: |
+          # ${{ github.workspace }}/
+          DEB=$(ls _artifacts/wezterm-*.deb)
+          VERSION=$(echo "version=$DEB" | sed 's/wezterm-\(.*\)\.Debian\.deb/\1/')
+
       - name: Upload artifacts
         uses: actions/upload-artifact@v7
         with:
@@ -69,27 +75,21 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       artifact_names: ${{ steps.compute.outputs.artifact_names }}
-      version: ${{ steps.compute_version.outputs.version }}
     steps:
       - id: compute
         run: |
           names='["debs-amd64"]' # that's it
           echo 'artifact_names=$names' >> $GITHUB_OUTPUT
 
-      - id: compute_version
-        run: |
-          # ${{ github.workspace }}/
-          DEB=$(ls _artifacts/wezterm-*.deb)
-          VERSION=$(echo "version=$DEB" | sed 's/wezterm-\(.*\)\.Debian\.deb/\1/')
 
   release:
-    needs: setup-artifacts
+    needs: [ setup-artifacts, build-custom]
     uses: michal-maruska/workflows/.github/workflows/debian-release.yml@main
     with:
       artifacts: '["debs-amd64"]'
         # "debs-indep",
         # ${{ needs.setup-artifacts.outputs.artifact_names }}
-      release: ${{ needs.setup-artifacts.outputs.version }}
+      release: ${{ needs.build-custom.outputs.version }}
         # ${{ needs.update-changelog.outputs.version }}
     secrets: inherit
 
@@ -100,5 +100,5 @@ jobs:
     with:
       # component: ${{ github.repository }}
       # run_id: ${{ github.run_id }}
-      release: ${{ needs.setup-artifacts.outputs.version }} # fixme
+      release: ${{ needs.build-custom.outputs.version }}
     secrets: inherit
