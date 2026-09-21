@@ -208,10 +208,25 @@ impl KeyboardWithFallback {
             res |= Modifiers::CTRL;
         }
         if mask.contains(xcb::x::KeyButMask::MOD1) {
+            // meta
             res |= Modifiers::ALT;
         }
         if mask.contains(xcb::x::KeyButMask::MOD4) {
+            // ALT
             res |= Modifiers::SUPER;
+        }
+        // hyper
+        if mask.contains(xcb::x::KeyButMask::MOD2) {
+            log::debug!("Mod2");
+            res |= Modifiers::LEFT_ALT;
+        }
+        if mask.contains(xcb::x::KeyButMask::MOD3) {
+            log::debug!("Mod3");
+            res |= Modifiers::RIGHT_ALT;
+        }
+
+        if res != Modifiers::default() {
+            log::debug!("button: detected modifier");
         }
         res
     }
@@ -406,7 +421,10 @@ impl KeyboardWithFallback {
                                      sym {fb_sym:?} because layout did not expand to \
                                      anything"
                                 );
-                                fb_sym
+                                // indeed: https://github.com/wezterm/wezterm/issues/4910#issuecomment-1962928909
+                                log::debug!("Not sure if this is a good idea -- maruska: disabled");
+                                // fb_sym
+                                sym
                             }
                             _ => sym,
                         }

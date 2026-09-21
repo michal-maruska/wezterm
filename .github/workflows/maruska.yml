@@ -1,0 +1,103 @@
+name: Publish Debian Package
+
+on:
+  push:
+    branches:
+      - main
+
+  workflow_dispatch:
+    inputs:
+      ref:
+        description: 'Branch, tag or SHA to build'
+        type: string
+        default: 'main'
+
+      architectures:
+        type: choice
+        options:
+          - '["amd64"]'
+          - '["arm64"]'
+          - '["amd64","arm64"]'
+        default: '["amd64"]'
+
+permissions:
+  contents: write
+  packages: write # Optional, but good if you use GHCR
+
+jobs:
+  build-custom:
+    runs-on: ubuntu-latest
+    container:
+      # this is what we build for: SID
+      image: ghcr.io/${{ github.repository_owner }}/debian-builder:main
+      # for now the image is not public ... mmc: why?
+      credentials:
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+    outputs:
+      version: ${{ steps.compute_version.outputs.version }}
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v5
+        with:
+          ref: ${{ inputs.ref }}
+          # mmc: full.
+          # todo: up to previous tag
+          fetch-depth: 0 # Get all history for tagging
+          submodules: "recursive"
+
+      - name: fix ownership
+        # mess with permissions/ownership: actions/checkout works outside the container
+        run: |
+          chown -R builder:builder .
+
+      - name: build
+        run: |
+          apt update
+          # mkdir _artifacts
+          ./ci/mmc-build.sh
+
+      - id: compute_version
+        run: |
+          # ${{ github.workspace }}/
+          DEB=$(ls _artifacts/wezterm-*.deb)
+          VERSION=$(echo "$DEB" | sed 's|_artifacts/wezterm-\(.*\)\.Debian\.deb|\1|')
+          echo "this build produced release $VERSION"
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v7
+        with:
+          name: debs-amd64
+          path: ${{ github.workspace }}/_artifacts/*
+
+  setup-artifacts:
+    needs: [build-custom ]   # build-amd64-and-indep, build-arm64]
+    if: always() && !cancelled()
+    runs-on: ubuntu-latest
+    outputs:
+      artifact_names: ${{ steps.compute.outputs.artifact_names }}
+    steps:
+      - id: compute
+        run: |
+          names='["debs-amd64"]'
+          echo "artifact_names=$names" >> $GITHUB_OUTPUT
+
+  release:
+    needs: [ setup-artifacts, build-custom]
+    uses: michal-maruska/workflows/.github/workflows/debian-release.yml@main
+    with:
+      artifacts: '["debs-amd64"]'
+        # ${{ needs.setup-artifacts.outputs.artifact_names }}
+      release: ${{ needs.build-custom.outputs.version }}
+    secrets: inherit
+
+# fixme: I need a version string!
+  notify:
+    needs: [release, build-custom]
+    uses: michal-maruska/workflows/.github/workflows/notify-apt-repo.yml@main
+    with:
+      # component: ${{ github.repository }}
+      # run_id: ${{ github.run_id }}
+      release: ${{ needs.build-custom.outputs.version }}
+    secrets: inherit
