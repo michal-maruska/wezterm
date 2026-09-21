@@ -30,8 +30,8 @@ jobs:
       credentials:
         username: ${{ github.actor }}
         password: ${{ secrets.GITHUB_TOKEN }}
-
-    # Is this ORG-scope token? but why? others cannot READ the docker image?
+    outputs:
+      version: ${{ steps.compute_version.outputs.version }}
     steps:
       - name: Checkout source
         uses: actions/checkout@v4
@@ -52,6 +52,14 @@ jobs:
           apt update
           # mkdir _artifacts
           ./ci/mmc-build.sh
+
+      - id: compute_version
+        run: |
+          # ${{ github.workspace }}/
+          DEB=$(ls _artifacts/wezterm-*.deb)
+          VERSION=$(echo "$DEB" | sed 's|_artifacts/wezterm-\(.*\)\.Debian\.deb|\1|')
+          echo "this build produced release $VERSION"
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
